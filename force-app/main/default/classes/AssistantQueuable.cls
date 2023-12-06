@@ -42,16 +42,8 @@ public class AssistantQueuable implements Queueable, Database.AllowsCallouts {
         System.debug('CALLOUTS: ' + Limits.getCallouts() + ' / ' + Limits.getLimitCallouts());
         System.debug('CPU TIME: ' + Limits.getCpuTime() + ' / ' + Limits.getLimitCpuTime());
         if(Limits.getCallouts() < Limits.getLimitCallouts() - 5 && Limits.getCpuTime() < Limits.getLimitCpuTime() - 1500){
-            
-            //TODO: find better way to sleep?
-            // Biggest problem with this is it crushes the log files
-            // https://salesforce.stackexchange.com/a/218304/3341
-            Long epochToDate = System.currentTimeMillis();
-            while (epochToDate <= epochToDate + 500) {
-                // do something expensive here to actually slow it down?
-                epochToDate = System.currentTimeMillis();
-            }
-
+        
+            sleep(500);
             poll();
             return;
         }
@@ -86,6 +78,15 @@ public class AssistantQueuable implements Queueable, Database.AllowsCallouts {
         OpenAiApi.submitToolOutputs(threadId, run.id, toolOutputs);
     }
 
-
+    //TODO: find better way to sleep?
+    // Biggest problem with this is it crushes the log files
+    // https://salesforce.stackexchange.com/a/218304/3341
+    private static void sleep(Integer ms) {
+        Long epochToDate = System.currentTimeMillis();
+        while (epochToDate <= epochToDate + ms) {
+            // do something expensive here to actually slow it down?
+            epochToDate = System.currentTimeMillis();
+        }
+    }
 
 }
