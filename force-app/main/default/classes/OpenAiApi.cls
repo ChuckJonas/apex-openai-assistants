@@ -8,7 +8,7 @@ public class OpenAiApi {
         req.setHeader('Content-Type', 'application/json');
         req.setHeader('OpenAI-Beta', 'assistants=v1');
         if (body != null) {
-            req.setBody(JSON.serialize(body));
+            req.setBody(JSON.serialize(body, true));
         }
 
         Http http = new Http();
@@ -22,10 +22,9 @@ public class OpenAiApi {
 
     // https://platform.openai.com/docs/api-reference/threads/createThread
     // returns threadId
-    public static String createThread(String assistantId, List<RequestMessage> messages, Map<String, Object> metadata) {
+    public static String createThread(List<RequestMessage> messages, Map<String, Object> metadata) {
         String endpoint = '/threads';
         Map<String, Object> body = new Map<String, Object> {
-                'assistant_id' => assistantId,
                 'messages' => messages,
                 'metadata' => metadata
         };
@@ -47,9 +46,7 @@ public class OpenAiApi {
     public static ThreadMessageList listMessages(String threadId) {
         String endpoint = '/threads/' + threadId + '/messages';
         HttpResponse res = baseRequest(endpoint, 'GET', null);
-        Map<String, Object> resBody = (Map<String, Object>) JSON.deserializeUntyped(res.getBody());
-        List<Object> messages = (List<Object>) resBody.get('data');
-        return (ThreadMessageList) JSON.deserialize(JSON.serialize(messages), ThreadMessageList.class);
+        return (ThreadMessageList) JSON.deserialize(res.getBody(), ThreadMessageList.class);
     }
 
     // https://platform.openai.com/docs/api-reference/runs/createRun
@@ -73,7 +70,7 @@ public class OpenAiApi {
 
     // https://platform.openai.com/docs/api-reference/runs/submitToolOutputs
     public static HttpResponse submitToolOutputs(String threadId, String runId, List<ToolOutput> outputs) {
-        String endpoint = '/threads/' + threadId  + '/runs/' + runId + '/submit-tool-outputs';
+        String endpoint = '/threads/' + threadId  + '/runs/' + runId + '/submit_tool_outputs';
        
         Map<String, Object> body = new Map<String, Object> {
                 'tool_outputs' => outputs
@@ -98,26 +95,25 @@ public class OpenAiApi {
         public string thread_id;
         public String status;
         public String id;
-        public RequiredAction requiredAction;
+        public RequiredAction required_action;
     }
 
     public class RequiredAction {
-        public SubmitToolOutputs submitToolOutputs;
+        public SubmitToolOutputs submit_tool_outputs;
     }
 
     public class SubmitToolOutputs {
-        public List<ToolCall> toolCalls;
+        public List<ToolCall> tool_calls;
     }
 
     public class ToolCall {
-        public String tool_call_id;
-        public String output;
+        public String id;
         public ToolFn function;
     }
 
     public class ToolFn {
         public String name;
-        public String args;
+        public String arguments;
     }
 
     public class ToolOutput {

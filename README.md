@@ -9,6 +9,7 @@ Library for working with OpenAI Assistants in Salesforce Apex.
 0. Sign-up for OpenAI and create an API key
 1. Install
 2. Configure Named Credential for OpenAI API
+3. Assign Permission set `sfdx force:user:permset:assign -n OpenAI`
 
 ## Usage
 
@@ -49,14 +50,15 @@ public class DemoAssistant implements IAssistant  {
 
 ```java
 OpenAiApi.RequestMessage[] messages = new OpenAiApi.RequestMessage[] {
-    new OpenAiApi.RequestMessage('user', 'Give me the last account created'),
+    new OpenAiApi.RequestMessage('user', 'Give me the last account created')
 };
 
-String threadId = OpenAiApi.createThread(DemoAssistant.ASSISTANT_ID, messages, null);
+String threadId = OpenAiApi.createThread(messages, null);
 OpenAiAPI.Run run = OpenAiApi.createRun(threadId, DemoAssistant.ASSISTANT_ID);
 
 // Poll the run
-AssistantQueuable poller = new AssistantQueuable(run, new DemoAssistant());
+AssistantQueuable runQueuable = new AssistantQueuable(run, new DemoAssistant());
+System.enqueueJob(runQueuable);
 ```
 
 Later, you may add more messages and run again:
