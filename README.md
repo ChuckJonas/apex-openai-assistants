@@ -67,3 +67,11 @@ OpenAiApi.createMessage(threadId, new OpenAiApi.RequestMessage('user', 'Give me 
 OpenAiAPI.Run run = OpenAiApi.createRun(threadId, assistantId);
 AssistantQueuable poller = new AssistantQueuable(run, new DemoAssistant());
 ```
+
+
+### How to integrate with a Client UI
+
+In order to build a client UI in Salesforce that can interact with the assistant, you'll likely want to create a custom object(s) that tracks the threads and gets updated each time a run completes.  This would make it easier to trigger UI updates when the run completes.  It also allows you to persist the threadId so that you can add messages to the thread later.  
+
+Alternatively, you could just have the client itself poll `OpenAIApi.getRun(runId)` until the run `status=complete`. 
+
