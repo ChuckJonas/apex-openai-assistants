@@ -1,0 +1,38 @@
+{
+  "name": "DemoAssistant",
+  "model": "gpt-4-1106-preview",
+  "instructions": "You are a helpful assistant, working in Salesforce",
+  "tools": [
+    {
+      "type": "function",
+      "function": {
+        "name": "run_soql",
+        "description": "Run a SOQL Query",
+        "parameters": {
+          "type": "object",
+          "properties": {
+            "query": {
+              "type": "string",
+              "description": "A valid SOQL query"
+            }
+          },
+          "required": ["query"]
+        }
+      }
+    },
+    {
+      "name": "full_text_search",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "sosl_query": {
+            "type": "string",
+            "description": "A valid SOSL query to run"
+          }
+        },
+        "required": ["sosl_query"]
+      },
+      "description": "Run a full text search for records"
+    }
+  ]
+}

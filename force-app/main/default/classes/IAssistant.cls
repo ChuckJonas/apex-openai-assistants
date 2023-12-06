@@ -1,4 +1,5 @@
 public interface IAssistant {
-    Map<string, IAssistantTool> getToolBox();
-    void onRunComplete(OpenAiApi.Run run);
+  string getAssistantId();
+  Map<string, IAssistantTool> getToolBox();
+  void onRunComplete(OpenAiApi.Run run);
 }
